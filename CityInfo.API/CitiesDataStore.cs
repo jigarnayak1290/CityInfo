@@ -17,7 +17,7 @@ namespace CityInfo.API
                     Id = 1,
                     Name = "AMD",
                     Description = "AMD desc",
-                    PointOfInterest = new List<PointOfInterestDto>()
+                    PointsOfInterest = new List<PointOfInterestDto>()
                     {
                         new PointOfInterestDto()
                         {
@@ -39,7 +39,7 @@ namespace CityInfo.API
                     Id = 2,
                     Name = "RJT",
                     Description = "RJT desc",
-                    PointOfInterest = new List<PointOfInterestDto>()
+                    PointsOfInterest = new List<PointOfInterestDto>()
                     {
                         new PointOfInterestDto()
                         {
@@ -60,7 +60,7 @@ namespace CityInfo.API
                     Id = 3,
                     Name = "BRD",
                     Description = "BRD desc",
-                    PointOfInterest = new List<PointOfInterestDto>()
+                    PointsOfInterest = new List<PointOfInterestDto>()
                     {
                         new PointOfInterestDto()
                         {
