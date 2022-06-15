@@ -2,9 +2,9 @@
 
 namespace CityInfo.API.Models
 {
-    public class PointOfInterestCreationDto
+    public class PointOfInteresetForUpdate
     {
-        [Required(ErrorMessage ="Jigar error msg, Name required")]
+        [Required(ErrorMessage = "Jigar error msg, Name required")]
         [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
 
