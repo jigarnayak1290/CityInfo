@@ -1,4 +1,5 @@
 ﻿using CityInfo.API.Models;
+using CityInfo.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,17 @@ namespace CityInfo.API.Controllers{
     [Route("api/cities/{cityId}/pointsofinterest")]
     [ApiController]
     public class PointsOfInterestController : ControllerBase
-    {        
+    {
+        private readonly ILogger<PointsOfInterestController> _logger;
+        private readonly LocalMailService _mailService;
+
+        public PointsOfInterestController(ILogger<PointsOfInterestController> logger,
+            LocalMailService mailService)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<PointOfInterestDto>> GetPointsOfInterest(int cityId)
         {
@@ -16,6 +27,7 @@ namespace CityInfo.API.Controllers{
 
             if (city == null)
             {
+                _logger.LogInformation($"City Id {cityId} wasn't found");
                 return NotFound();
             }
 
@@ -25,21 +37,31 @@ namespace CityInfo.API.Controllers{
         [HttpGet("{pointOfInterestID}", Name = "GetPointOfInterest")]
         public ActionResult<PointOfInterestDto> GetPointOfInterest( int cityId, int pointOfInterestID)
         {
-            var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
-
-            if (city == null)
+            try
             {
-                return NotFound();
+                //throw new Exception("Example sample");
+
+                var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+
+                if (city == null)
+                {
+                    return NotFound();
+                }
+
+                var pointOfInterest = city.PointsOfInterest.FirstOrDefault(c => c.Id == pointOfInterestID);
+
+                if (pointOfInterest == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(pointOfInterest);
             }
-
-            var pointOfInterest = city.PointsOfInterest.FirstOrDefault(c => c.Id == pointOfInterestID);
-
-            if(pointOfInterest == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogCritical("Exception occured {cityId} ",ex);
+                return StatusCode(500, "A problem happend");
             }
-
-            return Ok(pointOfInterest);
         }
 
         [HttpPost]
@@ -176,7 +198,7 @@ namespace CityInfo.API.Controllers{
             }
 
             city.PointsOfInterest.Remove(pointOfInterestFromStore);
-
+            _mailService.Send("Jigar Mail Subject", "Jigar Mail Message");
             return NoContent();
         }
 
